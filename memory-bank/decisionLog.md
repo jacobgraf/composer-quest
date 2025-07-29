@@ -90,3 +90,41 @@ Some package names (like "spatie/laravel-medialibrary" and "spatie/laravel-query
 - Text now wraps properly within the container boundaries
 
 [2025-07-29 20:37:45] - Package display overflow issue resolved
+
+## Decision
+
+Implemented proper image usage for conductor and package visuals
+
+## Rationale
+
+The game was using emoji characters (🎼 for conductor, 📦 for packages) instead of the provided image assets. User uploaded conductor.jpg and packagist.jpg (both 800x800 JPEG images) that needed to be integrated into the game for better visual appeal and branding.
+
+## Implementation Details
+
+- Replaced conductor emoji with conductor.jpg image in 24x24px circular container
+- Replaced package emoji with packagist.jpg image in 12x12px rounded container
+- Added proper image styling with object-cover for aspect ratio preservation
+- Used overflow-hidden for clean circular/rounded appearance
+- Maintained existing layout structure and responsive design
+- Images are properly sized and positioned within game elements
+
+[2025-07-29 21:14:25] - Image assets properly integrated into game interface
+
+## Decision
+
+Refactored audio file names for better clarity and maintainability
+
+## Rationale
+
+The original audio file names (applause.mp3 and dissonant.mp3) were descriptive of the sound content but not intuitive for their game function. Using right.mp3 and wrong.mp3 makes the code more readable and the file purpose immediately clear to developers.
+
+## Implementation Details
+
+- Renamed applause.mp3 to right.mp3 (plays when player makes correct choice)
+- Renamed dissonant.mp3 to wrong.mp3 (plays when player makes incorrect choice)
+- Updated all code references in audio object initialization
+- Updated audio.applause.play() calls to audio.right.play()
+- Updated audio.dissonant.play() calls to audio.wrong.play()
+- Maintained all existing audio functionality and volume settings
+
+[2025-07-29 21:31:20] - Audio files renamed for better code clarity

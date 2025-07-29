@@ -206,9 +206,13 @@
         <div class="text-center">
           <div
             id="conductor"
-            class="w-24 h-24 bg-orange-300 rounded-full flex items-center justify-center text-4xl mb-2"
+            class="w-24 h-24 rounded-full overflow-hidden mb-2 border-2 border-orange-300"
           >
-            🎼
+            <img
+              src="assets/conductor.jpg"
+              alt="Conductor"
+              class="w-full h-full object-cover"
+            />
           </div>
           <p class="pixel-font text-xs text-gray-600">Composer</p>
         </div>
@@ -284,17 +288,17 @@
 
       // Audio System
       const audio = {
-        applause: new Audio("assets/applause.mp3"),
-        dissonant: new Audio("assets/dissonant.mp3"),
+        right: new Audio("assets/right.mp3"),
+        wrong: new Audio("assets/wrong.mp3"),
         background: null, // Background music can be added later
       };
 
       // Preload audio and set volume
       try {
-        audio.applause.preload = "auto";
-        audio.dissonant.preload = "auto";
-        audio.applause.volume = 0.3;
-        audio.dissonant.volume = 0.3;
+        audio.right.preload = "auto";
+        audio.wrong.preload = "auto";
+        audio.right.volume = 0.3;
+        audio.wrong.volume = 0.3;
       } catch (e) {
         console.log("Audio not supported or files not found");
       }
@@ -406,7 +410,9 @@
 
         packageElement.innerHTML = `
                 <div class="text-center">
-                    <div class="text-2xl mb-2">📦</div>
+                    <div class="w-12 h-12 mx-auto mb-2 rounded overflow-hidden">
+                        <img src="assets/packagist.jpg" alt="Package" class="w-full h-full object-cover">
+                    </div>
                     <div class="pixel-font text-xs text-gray-800 break-words leading-tight">${packageData.name}</div>
                 </div>
             `;
@@ -460,7 +466,7 @@
           gameState.streak++;
           packageElement.classList.add("package-correct");
           elements.conductor.classList.add("conductor-conducting");
-          audio.applause.play();
+          audio.right.play();
 
           // Check for easter eggs
           checkEasterEggs();
@@ -469,7 +475,7 @@
           gameState.score = Math.max(0, gameState.score - 5);
           gameState.streak = 0;
           packageElement.classList.add("package-wrong");
-          audio.dissonant.play();
+          audio.wrong.play();
         }
 
         updateUI();
