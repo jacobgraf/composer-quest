@@ -299,9 +299,9 @@
         audio.wrong.preload = "auto";
         audio.background.preload = "auto";
 
-        audio.right.volume = 0.5;
-        audio.wrong.volume = 0.5;
-        audio.background.volume = 0.2;
+        audio.right.volume = 0.7;
+        audio.wrong.volume = 0.7;
+        audio.background.volume = 0.1;
         audio.background.loop = true;
       } catch (e) {
         console.log("Audio not supported or files not found");
@@ -310,15 +310,34 @@
       // Audio helper functions
       function playSound(audioElement) {
         try {
-          audioElement.currentTime = 0; // Reset to start
-          const playPromise = audioElement.play();
+          // Pause and reset the audio to ensure it plays from start
+          audioElement.pause();
+          audioElement.currentTime = 0;
+
+          // Clone the audio element to avoid conflicts with multiple rapid plays
+          const audioClone = audioElement.cloneNode();
+          audioClone.volume = audioElement.volume;
+
+          const playPromise = audioClone.play();
           if (playPromise !== undefined) {
             playPromise.catch((error) => {
               console.log("Audio play failed:", error);
+              // Fallback: try playing the original element
+              audioElement.currentTime = 0;
+              audioElement
+                .play()
+                .catch((e) => console.log("Fallback audio failed:", e));
             });
           }
         } catch (e) {
           console.log("Audio play error:", e);
+          // Last resort fallback
+          try {
+            audioElement.currentTime = 0;
+            audioElement.play();
+          } catch (fallbackError) {
+            console.log("All audio playback methods failed:", fallbackError);
+          }
         }
       }
 

@@ -156,3 +156,30 @@ The right/wrong sound effects were not playing due to browser autoplay restricti
 - Increased effect volumes from 0.3 to 0.5 for better audibility
 
 [2025-07-29 21:35:00] - Audio system enhanced with background music and improved reliability
+
+## Decision
+
+Final audio system optimization for improved sound effect playback
+
+## Rationale
+
+User reported that right/wrong sound effects were not playing while background music worked correctly. The issue was likely due to audio conflicts when multiple sounds tried to play simultaneously, and the background music volume was too loud, masking the sound effects.
+
+## Implementation Details
+
+- **Volume Adjustments**: Lowered background music from 0.2 to 0.1, increased sound effects from 0.5 to 0.7
+- **Enhanced Sound Playback**: Improved `playSound()` function with audio cloning to prevent conflicts
+- **Multiple Fallback Methods**: Added layered fallback system for maximum browser compatibility
+- **Audio Conflict Resolution**: Pause and reset audio before playing to ensure clean playback
+- **Clone-based Playback**: Use audio clones for sound effects to allow overlapping plays
+
+## Technical Changes
+
+- Background music volume: 0.2 → 0.1 (50% reduction)
+- Sound effect volumes: 0.5 → 0.7 (40% increase)
+- Added audio.pause() and currentTime reset before playback
+- Implemented audio cloning for sound effects
+- Added multiple fallback mechanisms for failed audio playback
+- Enhanced error logging for audio debugging
+
+[2025-07-29 21:40:50] - Final audio optimization for reliable sound effect playback
