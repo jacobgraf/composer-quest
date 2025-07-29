@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Composer Quest: The Battle of the Packages</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
+      .pixel-font {
+        font-family: "Press Start 2P", monospace;
+      }
+
+      .falling-package {
+        transition: transform 0.1s linear;
+      }
+
+      .easter-egg {
+        animation: bounce 0.5s ease-in-out;
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.2);
+        }
+      }
+
+      .conductor-conducting {
+        animation: conduct 1s ease-in-out;
+      }
+
+      @keyframes conduct {
+        0%,
+        100% {
+          transform: rotate(0deg);
+        }
+        25% {
+          transform: rotate(-10deg);
+        }
+        75% {
+          transform: rotate(10deg);
+        }
+      }
+
+      .package-correct {
+        animation: correctPulse 0.5s ease-in-out;
+      }
+
+      .package-wrong {
+        animation: wrongShake 0.5s ease-in-out;
+      }
+
+      @keyframes correctPulse {
+        0%,
+        100% {
+          transform: scale(1);
+          background-color: #10b981;
+        }
+        50% {
+          transform: scale(1.1);
+          background-color: #34d399;
+        }
+      }
+
+      @keyframes wrongShake {
+        0%,
+        100% {
+          transform: translateX(0);
+          background-color: #ef4444;
+        }
+        25% {
+          transform: translateX(-5px);
+          background-color: #f87171;
+        }
+        75% {
+          transform: translateX(5px);
+          background-color: #f87171;
+        }
+      }
+
+      .game-background {
+        background: linear-gradient(
+          135deg,
+          #fbbf24 0%,
+          #f59e0b 50%,
+          #d97706 100%
+        );
+        min-height: 100vh;
+      }
+    </style>
+  </head>
+  <body class="game-background">
+    <!-- Start Screen -->
+    <div
+      id="startScreen"
+      class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50"
+    >
+      <div class="bg-white rounded-lg p-8 text-center max-w-md mx-4">
+        <h1 class="pixel-font text-2xl mb-4 text-orange-600">Composer Quest</h1>
+        <h2 class="pixel-font text-lg mb-6 text-gray-700">
+          The Battle of the Packages
+        </h2>
+        <p class="mb-4 text-sm">
+          Sort Laravel packages! Click ✅ for valid packages, ❌ for fake ones.
+        </p>
+        <p class="mb-6 text-sm">
+          Survive 60 seconds and achieve package harmony!
+        </p>
+        <button
+          id="startBtn"
+          class="pixel-font bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded transition-colors"
+        >
+          Start Game
+        </button>
+      </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div
+      id="gameOverScreen"
+      class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50 hidden"
+    >
+      <div class="bg-white rounded-lg p-8 text-center max-w-md mx-4">
+        <h1 class="pixel-font text-2xl mb-4 text-orange-600">Game Over!</h1>
+        <p id="finalScore" class="pixel-font text-lg mb-4"></p>
+        <p id="gameOverMessage" class="mb-6 text-sm"></p>
+        <div class="mb-6">
+          <h3 class="pixel-font text-sm mb-2">High Scores</h3>
+          <div id="highScores" class="text-xs space-y-1"></div>
+        </div>
+        <button
+          id="playAgainBtn"
+          class="pixel-font bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded transition-colors"
+        >
+          Play Again
+        </button>
+      </div>
+    </div>
+
+    <!-- Easter Egg Popup -->
+    <div
+      id="easterEgg"
+      class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-yellow-400 border-4 border-yellow-600 rounded-lg p-4 z-40 hidden"
+    >
+      <p id="easterEggText" class="pixel-font text-sm text-center"></p>
+    </div>
+
+    <!-- Main Game Container -->
+    <div class="container mx-auto px-4 py-8 h-screen flex flex-col">
+      <!-- Header -->
+      <div
+        class="flex justify-between items-center mb-6 bg-white bg-opacity-90 rounded-lg p-4"
+      >
+        <div class="pixel-font text-sm">
+          <span class="text-orange-600">Score:</span>
+          <span id="score" class="text-gray-800">0</span>
+        </div>
+        <div class="pixel-font text-sm">
+          <span class="text-red-600">Time:</span>
+          <span id="timer" class="text-gray-800">60</span>
+        </div>
+        <div class="pixel-font text-sm">
+          <span class="text-blue-600">Streak:</span>
+          <span id="streak" class="text-gray-800">0</span>
+        </div>
+      </div>
+
+      <!-- Game Area -->
+      <div
+        id="gameArea"
+        class="flex-1 relative overflow-hidden bg-white bg-opacity-20 rounded-lg"
+      >
+        <!-- Falling Packages Container -->
+        <div id="packagesContainer" class="absolute inset-0"></div>
+
+        <!-- Dependency Conflict Event -->
+        <div
+          id="dependencyConflict"
+          class="absolute inset-0 flex items-center justify-center bg-red-500 bg-opacity-90 hidden"
+        >
+          <div class="text-center">
+            <h2 class="pixel-font text-white text-xl mb-4">
+              DEPENDENCY CONFLICT!
+            </h2>
+            <button
+              id="resolveBtn"
+              class="pixel-font bg-yellow-400 hover:bg-yellow-500 text-black px-8 py-4 rounded-lg text-lg"
+            >
+              RESOLVE
+            </button>
+            <p class="text-white mt-2 text-sm">Quick! Click to resolve!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Player Area -->
+      <div
+        class="mt-6 flex items-center justify-center space-x-8 bg-white bg-opacity-90 rounded-lg p-6"
+      >
+        <!-- Conductor Character -->
+        <div class="text-center">
+          <div
+            id="conductor"
+            class="w-24 h-24 bg-orange-300 rounded-full flex items-center justify-center text-4xl mb-2"
+          >
+            🎼
+          </div>
+          <p class="pixel-font text-xs text-gray-600">Composer</p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex space-x-4">
+          <button
+            id="acceptBtn"
+            class="bg-green-500 hover:bg-green-600 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl transition-all transform hover:scale-110"
+          >
+            ✅
+          </button>
+          <button
+            id="rejectBtn"
+            class="bg-red-500 hover:bg-red-600 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl transition-all transform hover:scale-110"
+          >
+            ❌
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Game State
+      const gameState = {
+        score: 0,
+        timeLeft: 60,
+        streak: 0,
+        packages: [],
+        isPlaying: false,
+        isPaused: false,
+        gameSpeed: 1,
+        packageSpawnRate: 2000,
+        lastSpawn: 0,
+        currentPackage: null,
+        dependencyConflictActive: false,
+        lastDependencyConflict: 0,
+      };
+
+      // Package Dataset
+      const packages = [
+        // Valid Laravel Packages
+        { name: "spatie/laravel-permission", valid: true },
+        { name: "livewire/livewire", valid: true },
+        { name: "laravel/sanctum", valid: true },
+        { name: "laravel/telescope", valid: true },
+        { name: "barryvdh/laravel-debugbar", valid: true },
+        { name: "intervention/image", valid: true },
+        { name: "spatie/laravel-backup", valid: true },
+        { name: "laravel/horizon", valid: true },
+        { name: "spatie/laravel-activitylog", valid: true },
+        { name: "laravel/cashier", valid: true },
+        { name: "laravel/breeze", valid: true },
+        { name: "laravel/jetstream", valid: true },
+        { name: "spatie/laravel-medialibrary", valid: true },
+        { name: "laravel/nova", valid: true },
+        { name: "spatie/laravel-query-builder", valid: true },
+
+        // Fake/Malicious Packages
+        { name: "laravel/virus", valid: false },
+        { name: "hacker/exploit", valid: false },
+        { name: "malware/backdoor", valid: false },
+        { name: "fake/laravel-auth", valid: false },
+        { name: "suspicious/package", valid: false },
+        { name: "evil/composer", valid: false },
+        { name: "trojan/laravel", valid: false },
+        { name: "phishing/framework", valid: false },
+        { name: "malicious/artisan", valid: false },
+        { name: "virus/eloquent", valid: false },
+        { name: "spam/blade", valid: false },
+        { name: "fake/middleware", valid: false },
+      ];
+
+      // Audio System
+      const audio = {
+        applause: new Audio("assets/applause.mp3"),
+        dissonant: new Audio("assets/dissonant.mp3"),
+        background: null, // Background music can be added later
+      };
+
+      // Preload audio and set volume
+      try {
+        audio.applause.preload = "auto";
+        audio.dissonant.preload = "auto";
+        audio.applause.volume = 0.3;
+        audio.dissonant.volume = 0.3;
+      } catch (e) {
+        console.log("Audio not supported or files not found");
+      }
+
+      // DOM Elements
+      const elements = {
+        startScreen: document.getElementById("startScreen"),
+        gameOverScreen: document.getElementById("gameOverScreen"),
+        easterEgg: document.getElementById("easterEgg"),
+        easterEggText: document.getElementById("easterEggText"),
+        score: document.getElementById("score"),
+        timer: document.getElementById("timer"),
+        streak: document.getElementById("streak"),
+        gameArea: document.getElementById("gameArea"),
+        packagesContainer: document.getElementById("packagesContainer"),
+        conductor: document.getElementById("conductor"),
+        acceptBtn: document.getElementById("acceptBtn"),
+        rejectBtn: document.getElementById("rejectBtn"),
+        startBtn: document.getElementById("startBtn"),
+        playAgainBtn: document.getElementById("playAgainBtn"),
+        finalScore: document.getElementById("finalScore"),
+        gameOverMessage: document.getElementById("gameOverMessage"),
+        highScores: document.getElementById("highScores"),
+        dependencyConflict: document.getElementById("dependencyConflict"),
+        resolveBtn: document.getElementById("resolveBtn"),
+      };
+
+      // Initialize Game
+      function initGame() {
+        elements.startBtn.addEventListener("click", startGame);
+        elements.playAgainBtn.addEventListener("click", restartGame);
+        elements.acceptBtn.addEventListener("click", () =>
+          handlePackageAction(true)
+        );
+        elements.rejectBtn.addEventListener("click", () =>
+          handlePackageAction(false)
+        );
+        elements.resolveBtn.addEventListener(
+          "click",
+          resolveDependencyConflict
+        );
+
+        // Keyboard controls
+        document.addEventListener("keydown", (e) => {
+          if (!gameState.isPlaying) return;
+          if (e.key === "ArrowLeft" || e.key === "a") handlePackageAction(true);
+          if (e.key === "ArrowRight" || e.key === "d")
+            handlePackageAction(false);
+          if (e.key === " " && gameState.dependencyConflictActive) {
+            e.preventDefault();
+            resolveDependencyConflict();
+          }
+        });
+
+        loadHighScores();
+      }
+
+      // Start Game
+      function startGame() {
+        gameState.score = 0;
+        gameState.timeLeft = 60;
+        gameState.streak = 0;
+        gameState.packages = [];
+        gameState.isPlaying = true;
+        gameState.currentPackage = null;
+        gameState.lastSpawn = 0;
+        gameState.lastDependencyConflict = 0;
+
+        elements.startScreen.classList.add("hidden");
+        elements.gameOverScreen.classList.add("hidden");
+        elements.packagesContainer.innerHTML = "";
+
+        updateUI();
+        spawnPackage();
+        gameLoop();
+
+        // Start timer
+        const timer = setInterval(() => {
+          if (!gameState.isPlaying) {
+            clearInterval(timer);
+            return;
+          }
+
+          gameState.timeLeft--;
+          updateUI();
+
+          if (gameState.timeLeft <= 0) {
+            endGame();
+            clearInterval(timer);
+          }
+        }, 1000);
+      }
+
+      // Spawn Package
+      function spawnPackage() {
+        if (!gameState.isPlaying || gameState.currentPackage) return;
+
+        const packageData =
+          packages[Math.floor(Math.random() * packages.length)];
+        const packageElement = document.createElement("div");
+
+        packageElement.className =
+          "absolute bg-white border-2 border-gray-300 rounded-lg p-4 shadow-lg falling-package cursor-pointer";
+        packageElement.style.left =
+          Math.random() * (elements.gameArea.offsetWidth - 200) + "px";
+        packageElement.style.top = "-100px";
+        packageElement.style.width = "200px";
+
+        packageElement.innerHTML = `
+                <div class="text-center">
+                    <div class="text-2xl mb-2">📦</div>
+                    <div class="pixel-font text-xs text-gray-800">${packageData.name}</div>
+                </div>
+            `;
+
+        packageElement.dataset.valid = packageData.valid;
+        packageElement.dataset.name = packageData.name;
+
+        elements.packagesContainer.appendChild(packageElement);
+        gameState.currentPackage = packageElement;
+
+        // Animate falling
+        let position = -100;
+        const fallSpeed = 2 + gameState.score / 100; // Increase speed with score
+
+        const fall = setInterval(() => {
+          if (!gameState.isPlaying || !packageElement.parentNode) {
+            clearInterval(fall);
+            return;
+          }
+
+          position += fallSpeed;
+          packageElement.style.top = position + "px";
+
+          // Check if package reached bottom
+          if (position > elements.gameArea.offsetHeight) {
+            clearInterval(fall);
+            if (packageElement.parentNode) {
+              packageElement.remove();
+              gameState.currentPackage = null;
+              // Penalty for missing package
+              gameState.streak = 0;
+              updateUI();
+              setTimeout(spawnPackage, 1000);
+            }
+          }
+        }, 16); // ~60fps
+      }
+
+      // Handle Package Action
+      function handlePackageAction(accept) {
+        if (!gameState.currentPackage || gameState.dependencyConflictActive)
+          return;
+
+        const packageElement = gameState.currentPackage;
+        const isValid = packageElement.dataset.valid === "true";
+        const correct = (accept && isValid) || (!accept && !isValid);
+
+        if (correct) {
+          // Correct answer
+          gameState.score += 10 + gameState.streak * 5;
+          gameState.streak++;
+          packageElement.classList.add("package-correct");
+          elements.conductor.classList.add("conductor-conducting");
+          audio.applause.play();
+
+          // Check for easter eggs
+          checkEasterEggs();
+        } else {
+          // Wrong answer
+          gameState.score = Math.max(0, gameState.score - 5);
+          gameState.streak = 0;
+          packageElement.classList.add("package-wrong");
+          audio.dissonant.play();
+        }
+
+        updateUI();
+
+        // Remove package and spawn new one
+        setTimeout(() => {
+          if (packageElement.parentNode) {
+            packageElement.remove();
+          }
+          gameState.currentPackage = null;
+          elements.conductor.classList.remove("conductor-conducting");
+
+          setTimeout(spawnPackage, 500);
+        }, 500);
+      }
+
+      // Check Easter Eggs
+      function checkEasterEggs() {
+        const messages = [
+          "Taylor Otwell approves!",
+          "Artisan command executed!",
+          "Package harmony achieved!",
+          "Eloquent performance!",
+          "Blade template mastery!",
+          "Middleware magic!",
+        ];
+
+        if (gameState.streak === 5) {
+          showEasterEgg(messages[0]);
+        } else if (gameState.streak === 10) {
+          showEasterEgg(messages[1]);
+        } else if (gameState.streak === 15) {
+          showEasterEgg(messages[2]);
+        } else if (gameState.streak > 0 && gameState.streak % 20 === 0) {
+          showEasterEgg(messages[Math.floor(Math.random() * messages.length)]);
+        }
+      }
+
+      // Show Easter Egg
+      function showEasterEgg(message) {
+        elements.easterEggText.textContent = message;
+        elements.easterEgg.classList.remove("hidden");
+        elements.easterEgg.classList.add("easter-egg");
+
+        setTimeout(() => {
+          elements.easterEgg.classList.add("hidden");
+          elements.easterEgg.classList.remove("easter-egg");
+        }, 2000);
+      }
+
+      // Dependency Conflict Event
+      function triggerDependencyConflict() {
+        if (gameState.dependencyConflictActive) return;
+
+        gameState.dependencyConflictActive = true;
+        elements.dependencyConflict.classList.remove("hidden");
+
+        // Auto-resolve after 3 seconds if not clicked
+        setTimeout(() => {
+          if (gameState.dependencyConflictActive) {
+            gameState.dependencyConflictActive = false;
+            elements.dependencyConflict.classList.add("hidden");
+            // Penalty for not resolving
+            gameState.score = Math.max(0, gameState.score - 10);
+            updateUI();
+          }
+        }, 3000);
+      }
+
+      // Resolve Dependency Conflict
+      function resolveDependencyConflict() {
+        if (!gameState.dependencyConflictActive) return;
+
+        gameState.dependencyConflictActive = false;
+        elements.dependencyConflict.classList.add("hidden");
+        gameState.score += 20;
+        gameState.lastDependencyConflict = Date.now();
+        updateUI();
+
+        showEasterEgg("Dependency resolved!");
+      }
+
+      // Game Loop
+      function gameLoop() {
+        if (!gameState.isPlaying) return;
+
+        // Trigger dependency conflicts randomly
+        if (
+          Date.now() - gameState.lastDependencyConflict > 15000 &&
+          Math.random() < 0.02
+        ) {
+          triggerDependencyConflict();
+        }
+
+        requestAnimationFrame(gameLoop);
+      }
+
+      // Update UI
+      function updateUI() {
+        elements.score.textContent = gameState.score;
+        elements.timer.textContent = gameState.timeLeft;
+        elements.streak.textContent = gameState.streak;
+      }
+
+      // End Game
+      function endGame() {
+        gameState.isPlaying = false;
+
+        // Save high score
+        saveHighScore(gameState.score);
+
+        // Show game over screen
+        elements.finalScore.textContent = `Final Score: ${gameState.score}`;
+
+        let message = "Good effort!";
+        if (gameState.score >= 500) message = "Package Harmony Achieved!";
+        else if (gameState.score >= 300) message = "Excellent Composer!";
+        else if (gameState.score >= 150) message = "Great Package Management!";
+
+        elements.gameOverMessage.textContent = message;
+        displayHighScores();
+        elements.gameOverScreen.classList.remove("hidden");
+      }
+
+      // Restart Game
+      function restartGame() {
+        elements.packagesContainer.innerHTML = "";
+        startGame();
+      }
+
+      // High Score System
+      function saveHighScore(score) {
+        let highScores = JSON.parse(
+          localStorage.getItem("composerQuestHighScores") || "[]"
+        );
+        highScores.push({ score, date: new Date().toLocaleDateString() });
+        highScores.sort((a, b) => b.score - a.score);
+        highScores = highScores.slice(0, 5); // Keep top 5
+        localStorage.setItem(
+          "composerQuestHighScores",
+          JSON.stringify(highScores)
+        );
+      }
+
+      function loadHighScores() {
+        return JSON.parse(
+          localStorage.getItem("composerQuestHighScores") || "[]"
+        );
+      }
+
+      function displayHighScores() {
+        const highScores = loadHighScores();
+        elements.highScores.innerHTML = highScores
+          .map(
+            (score, index) =>
+              `<div>${index + 1}. ${score.score} (${score.date})</div>`
+          )
+          .join("");
+      }
+
+      // Initialize when page loads
+      document.addEventListener("DOMContentLoaded", initGame);
+    </script>
+  </body>
+</html>
