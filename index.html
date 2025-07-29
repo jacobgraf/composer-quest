@@ -253,38 +253,94 @@
       };
 
       // Package Dataset
-      const packages = [
-        // Valid Laravel Packages
-        { name: "spatie/laravel-permission", valid: true },
-        { name: "livewire/livewire", valid: true },
-        { name: "laravel/sanctum", valid: true },
-        { name: "laravel/telescope", valid: true },
-        { name: "barryvdh/laravel-debugbar", valid: true },
-        { name: "intervention/image", valid: true },
-        { name: "spatie/laravel-backup", valid: true },
-        { name: "laravel/horizon", valid: true },
-        { name: "spatie/laravel-activitylog", valid: true },
-        { name: "laravel/cashier", valid: true },
-        { name: "laravel/breeze", valid: true },
-        { name: "laravel/jetstream", valid: true },
-        { name: "spatie/laravel-medialibrary", valid: true },
-        { name: "laravel/nova", valid: true },
-        { name: "spatie/laravel-query-builder", valid: true },
-
-        // Fake/Malicious Packages
-        { name: "laravel/virus", valid: false },
-        { name: "hacker/exploit", valid: false },
-        { name: "malware/backdoor", valid: false },
-        { name: "fake/laravel-auth", valid: false },
-        { name: "suspicious/package", valid: false },
-        { name: "evil/composer", valid: false },
-        { name: "trojan/laravel", valid: false },
-        { name: "phishing/framework", valid: false },
-        { name: "malicious/artisan", valid: false },
-        { name: "virus/eloquent", valid: false },
-        { name: "spam/blade", valid: false },
-        { name: "fake/middleware", valid: false },
+      // Obfuscated package data - Base64 encoded to prevent easy cheating
+      const _0x2f4a = [
+        "c3BhdGllL2xhcmF2ZWwtcGVybWlzc2lvbg==", // spatie/laravel-permission
+        "bGl2ZXdpcmUvbGl2ZXdpcmU=", // livewire/livewire
+        "bGFyYXZlbC9zYW5jdHVt", // laravel/sanctum
+        "bGFyYXZlbC90ZWxlc2NvcGU=", // laravel/telescope
+        "YmFycnl2ZGgvbGFyYXZlbC1kZWJ1Z2Jhcg==", // barryvdh/laravel-debugbar
+        "aW50ZXJ2ZW50aW9uL2ltYWdl", // intervention/image
+        "c3BhdGllL2xhcmF2ZWwtYmFja3Vw", // spatie/laravel-backup
+        "bGFyYXZlbC9ob3Jpem9u", // laravel/horizon
+        "c3BhdGllL2xhcmF2ZWwtYWN0aXZpdHlsb2c=", // spatie/laravel-activitylog
+        "bGFyYXZlbC9jYXNoaWVy", // laravel/cashier
+        "bGFyYXZlbC9icmVlemU=", // laravel/breeze
+        "bGFyYXZlbC9qZXRzdHJlYW0=", // laravel/jetstream
+        "c3BhdGllL2xhcmF2ZWwtbWVkaWFsaWJyYXJ5", // spatie/laravel-medialibrary
+        "bGFyYXZlbC9ub3Zh", // laravel/nova
+        "c3BhdGllL2xhcmF2ZWwtcXVlcnktYnVpbGRlcg==", // spatie/laravel-query-builder
+        "bGFyYXZlbC9wYXNzcG9ydA==", // laravel/passport
+        "bGFyYXZlbC9zY291dA==", // laravel/scout
+        "bGFyYXZlbC9zb2NpYWxpdGU=", // laravel/socialite
+        "c3BhdGllL2xhcmF2ZWwtc2x1Z2dhYmxl", // spatie/laravel-sluggable
+        "c3BhdGllL2xhcmF2ZWwtdHJhbnNsYXRhYmxl", // spatie/laravel-translatable
+        "YmFycnl2ZGgvbGFyYXZlbC1kb21wZGY=", // barryvdh/laravel-dompdf
+        "bWFhdHdlYnNpdGUvZXhjZWw=", // maatwebsite/excel
+        "bGFyYXZlbC90aW5rZXI=", // laravel/tinker
+        "bGFyYXZlbC91aQ==", // laravel/ui
+        "c3BhdGllL2xhcmF2ZWwtY29ycw==", // spatie/laravel-cors
+        "cHVzaGVyL3B1c2hlci1waHAtc2VydmVy", // pusher/pusher-php-server
+        "Z3V6emxlaHR0cC9ndXp6bGU=", // guzzlehttp/guzzle
+        "ZG9jdHJpbmUvZGJhbA==", // doctrine/dbal
+        "cHJlZGlzL3ByZWRpcw==", // predis/predis
+        "bGFyYXZlbC9mb3J0aWZ5", // laravel/fortify
       ];
+
+      const _0x8b3c = [
+        "bGFyYXZlbC92aXJ1cw==", // laravel/virus
+        "aGFja2VyL2V4cGxvaXQ=", // hacker/exploit
+        "bWFsd2FyZS9iYWNrZG9vcg==", // malware/backdoor
+        "ZmFrZS9sYXJhdmVsLWF1dGg=", // fake/laravel-auth
+        "c3VzcGljaW91cy9wYWNrYWdl", // suspicious/package
+        "ZXZpbC9jb21wb3Nlcg==", // evil/composer
+        "dHJvamFuL2xhcmF2ZWw=", // trojan/laravel
+        "cGhpc2hpbmcvZnJhbWV3b3Jr", // phishing/framework
+        "bWFsaWNpb3VzL2FydGlzYW4=", // malicious/artisan
+        "dmlydXMvZWxvcXVlbnQ=", // virus/eloquent
+        "c3BhbS9ibGFkZQ==", // spam/blade
+        "ZmFrZS9taWRkbGV3YXJl", // fake/middleware
+        "bWFsd2FyZS9sYXJhdmVsLWNvcmU=", // malware/laravel-core
+        "YmFja2Rvb3Ivc2Vzc2lvbg==", // backdoor/session
+        "ZXhwbG9pdC9kYXRhYmFzZQ==", // exploit/database
+        "dmlydXMvbWlncmF0aW9u", // virus/migration
+        "ZmFrZS9sYXJhdmVsLWluc3RhbGxlcg==", // fake/laravel-installer
+        "bWFsaWNpb3VzL3JvdXRl", // malicious/route
+        "dHJvamFuL2NvbnRyb2xsZXI=", // trojan/controller
+        "c3BhbS92YWxpZGF0aW9u", // spam/validation
+        "cGhpc2hpbmcvbGFyYXZlbC11aQ==", // phishing/laravel-ui
+        "ZXZpbC9zYW5jdHVt", // evil/sanctum
+        "aGFja2VyL3RlbGVzY29wZQ==", // hacker/telescope
+        "bWFsd2FyZS9ob3Jpem9u", // malware/horizon
+        "ZmFrZS9jYXNoaWVy", // fake/cashier
+        "c3VzcGljaW91cy9icmVlemU=", // suspicious/breeze
+        "dmlydXMvamV0c3RyZWFt", // virus/jetstream
+        "YmFja2Rvb3Ivbm92YQ==", // backdoor/nova
+        "ZXhwbG9pdC9wYXNzcG9ydA==", // exploit/passport
+        "bWFsaWNpb3VzL3Njb3V0", // malicious/scout
+      ];
+
+      const _0x1a2b = 0x1; // true
+      const _0x9c4d = 0x0; // false
+
+      // Decode and build packages array
+      const packages = [];
+
+      // Add valid packages
+      _0x2f4a.forEach((_0x5e6f) => {
+        packages.push({
+          name: atob(_0x5e6f),
+          valid: !!_0x1a2b,
+        });
+      });
+
+      // Add invalid packages
+      _0x8b3c.forEach((_0x7g8h) => {
+        packages.push({
+          name: atob(_0x7g8h),
+          valid: !!_0x9c4d,
+        });
+      });
 
       // Audio System
       const audio = {
