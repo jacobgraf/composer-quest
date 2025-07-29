@@ -399,14 +399,15 @@
         packageElement.className =
           "absolute bg-white border-2 border-gray-300 rounded-lg p-4 shadow-lg falling-package cursor-pointer";
         packageElement.style.left =
-          Math.random() * (elements.gameArea.offsetWidth - 200) + "px";
+          Math.random() * (elements.gameArea.offsetWidth - 250) + "px";
         packageElement.style.top = "-100px";
-        packageElement.style.width = "200px";
+        packageElement.style.width = "250px";
+        packageElement.style.minHeight = "120px";
 
         packageElement.innerHTML = `
                 <div class="text-center">
                     <div class="text-2xl mb-2">📦</div>
-                    <div class="pixel-font text-xs text-gray-800">${packageData.name}</div>
+                    <div class="pixel-font text-xs text-gray-800 break-words leading-tight">${packageData.name}</div>
                 </div>
             `;
 

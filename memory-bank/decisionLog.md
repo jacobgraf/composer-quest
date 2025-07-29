@@ -72,3 +72,21 @@ The game is a pure static HTML/JavaScript application, not a Laravel application
 - No code changes needed - game remains deployment-ready
 
 [2025-07-29 14:26:01] - Deployment strategy corrected based on user feedback
+
+## Decision
+
+Fixed package display overflow issue for long package names
+
+## Rationale
+
+Some package names (like "spatie/laravel-medialibrary" and "spatie/laravel-query-builder") were too long and breaking out of the 200px fixed-width package containers, causing visual overflow and poor user experience.
+
+## Implementation Details
+
+- Increased package container width from 200px to 250px
+- Added `minHeight: "120px"` to ensure consistent container sizing
+- Added `break-words` and `leading-tight` Tailwind classes to package name text
+- Updated spawn positioning calculation to account for new 250px width
+- Text now wraps properly within the container boundaries
+
+[2025-07-29 20:37:45] - Package display overflow issue resolved
