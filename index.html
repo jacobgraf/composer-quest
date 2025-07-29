@@ -557,23 +557,34 @@
 
       // Check Easter Eggs
       function checkEasterEggs() {
-        const messages = [
-          "Taylor Otwell approves!",
-          "Artisan command executed!",
-          "Package harmony achieved!",
-          "Eloquent performance!",
-          "Blade template mastery!",
-          "Middleware magic!",
+        // Obfuscated messages using base64 encoding and character manipulation
+        const _0x4f2a = [
+          "VGF5bG9yIE90d2VsbCBhcHByb3ZlcyE=",
+          "QXJ0aXNhbiBjb21tYW5kIGV4ZWN1dGVkIQ==",
+          "UGFja2FnZSBoYXJtb255IGFjaGlldmVkIQ==",
+          "RWxvcXVlbnQgcGVyZm9ybWFuY2Uh",
+          "QmxhZGUgdGVtcGxhdGUgbWFzdGVyeSE=",
+          "TWlkZGxld2FyZSBtYWdpYyE=",
         ];
 
-        if (gameState.streak === 5) {
-          showEasterEgg(messages[0]);
-        } else if (gameState.streak === 10) {
-          showEasterEgg(messages[1]);
-        } else if (gameState.streak === 15) {
-          showEasterEgg(messages[2]);
-        } else if (gameState.streak > 0 && gameState.streak % 20 === 0) {
-          showEasterEgg(messages[Math.floor(Math.random() * messages.length)]);
+        // Obfuscated trigger conditions using mathematical operations
+        const _0x1b3c = gameState.streak;
+        const _0x7e9f = [0x5, 0xa, 0xf]; // 5, 10, 15 in hex
+        const _0x2d8a = 0x14; // 20 in hex
+
+        // Dynamic message decoding
+        const _0x6c4b = (str) => atob(str);
+
+        // Obfuscated condition checking
+        if (_0x1b3c === _0x7e9f[0]) {
+          showEasterEgg(_0x6c4b(_0x4f2a[0]));
+        } else if (_0x1b3c === _0x7e9f[1]) {
+          showEasterEgg(_0x6c4b(_0x4f2a[1]));
+        } else if (_0x1b3c === _0x7e9f[2]) {
+          showEasterEgg(_0x6c4b(_0x4f2a[2]));
+        } else if (_0x1b3c > 0 && _0x1b3c % _0x2d8a === 0) {
+          const _0x9a5e = Math.floor(Math.random() * _0x4f2a.length);
+          showEasterEgg(_0x6c4b(_0x4f2a[_0x9a5e]));
         }
       }
 
