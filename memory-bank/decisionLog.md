@@ -55,3 +55,20 @@ Architect mode is restricted to Markdown files only, but the game development re
 - Return to Architect mode if additional planning is needed
 
 [2025-07-29 12:09:38] - Mode restriction identified, planning transition to Code mode
+
+## Decision
+
+Corrected deployment strategy from Laravel Cloud to static hosting
+
+## Rationale
+
+The game is a pure static HTML/JavaScript application, not a Laravel application. While Laravel Cloud could technically host static files, it's designed for Laravel applications. Static hosting platforms are more appropriate and cost-effective for this type of project.
+
+## Implementation Details
+
+- Recommended GitHub Pages, Netlify, Vercel, or Surge.sh
+- Updated README with proper deployment instructions
+- Maintained Laravel Cloud compatibility note for game jam requirements
+- No code changes needed - game remains deployment-ready
+
+[2025-07-29 14:26:01] - Deployment strategy corrected based on user feedback

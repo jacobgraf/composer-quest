@@ -40,11 +40,38 @@ A browser-based game for Laracon 2025 Game Jam where you play as a Laravel "Comp
 
 ## 🚀 Deployment
 
-### Laravel Cloud Deployment
+### Recommended Static Hosting Options
 
-1. **Upload Files**: Upload all files to your Laravel Cloud project
-2. **Static Hosting**: The game is a single HTML file with no build requirements
-3. **Access**: Navigate to your domain to play the game
+**GitHub Pages** (Free):
+
+1. Push to GitHub repository
+2. Enable GitHub Pages in repository settings
+3. Access via `https://username.github.io/composer-quest`
+
+**Netlify** (Free):
+
+1. Drag and drop the project folder to Netlify
+2. Instant deployment with custom domain support
+3. Automatic HTTPS and global CDN
+
+**Vercel** (Free):
+
+1. Connect GitHub repository or upload files
+2. Zero-config deployment for static sites
+3. Automatic deployments on git push
+
+**Surge.sh** (Free):
+
+```bash
+npm install -g surge
+cd composer-quest
+surge
+```
+
+**Any Web Server**:
+
+- Upload files to any web hosting service
+- No server-side requirements - pure static files
 
 ### Local Testing
 
@@ -113,10 +140,10 @@ The game includes 32 carefully curated package names:
 
 ## 🎮 Game Jam Requirements
 
-✅ **Hosted online** - Ready for Laravel Cloud
+✅ **Hosted online** - Ready for static hosting (GitHub Pages, Netlify, Vercel)
 ✅ **Playable in <5 minutes** - 60-second rounds
 ✅ **Vanilla JS + Tailwind** - No frameworks
-✅ **Laravel Cloud compatible** - Single HTML file
+✅ **Hostable on Laravel Cloud** - Single HTML file (though static hosting is more appropriate)
 ✅ **Creative image use** - Conductor & package delivery themes
 ✅ **Cross-browser compatible** - Modern web standards
 ✅ **Fun & memorable** - Laravel developer humor
