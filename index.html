@@ -290,17 +290,58 @@
       const audio = {
         right: new Audio("assets/right.mp3"),
         wrong: new Audio("assets/wrong.mp3"),
-        background: null, // Background music can be added later
+        background: new Audio("assets/music.mp3"),
       };
 
       // Preload audio and set volume
       try {
         audio.right.preload = "auto";
         audio.wrong.preload = "auto";
-        audio.right.volume = 0.3;
-        audio.wrong.volume = 0.3;
+        audio.background.preload = "auto";
+
+        audio.right.volume = 0.5;
+        audio.wrong.volume = 0.5;
+        audio.background.volume = 0.2;
+        audio.background.loop = true;
       } catch (e) {
         console.log("Audio not supported or files not found");
+      }
+
+      // Audio helper functions
+      function playSound(audioElement) {
+        try {
+          audioElement.currentTime = 0; // Reset to start
+          const playPromise = audioElement.play();
+          if (playPromise !== undefined) {
+            playPromise.catch((error) => {
+              console.log("Audio play failed:", error);
+            });
+          }
+        } catch (e) {
+          console.log("Audio play error:", e);
+        }
+      }
+
+      function startBackgroundMusic() {
+        try {
+          const playPromise = audio.background.play();
+          if (playPromise !== undefined) {
+            playPromise.catch((error) => {
+              console.log("Background music play failed:", error);
+            });
+          }
+        } catch (e) {
+          console.log("Background music error:", e);
+        }
+      }
+
+      function stopBackgroundMusic() {
+        try {
+          audio.background.pause();
+          audio.background.currentTime = 0;
+        } catch (e) {
+          console.log("Background music stop error:", e);
+        }
       }
 
       // DOM Elements
@@ -374,6 +415,9 @@
         updateUI();
         spawnPackage();
         gameLoop();
+
+        // Start background music
+        startBackgroundMusic();
 
         // Start timer
         const timer = setInterval(() => {
@@ -466,7 +510,7 @@
           gameState.streak++;
           packageElement.classList.add("package-correct");
           elements.conductor.classList.add("conductor-conducting");
-          audio.right.play();
+          playSound(audio.right);
 
           // Check for easter eggs
           checkEasterEggs();
@@ -475,7 +519,7 @@
           gameState.score = Math.max(0, gameState.score - 5);
           gameState.streak = 0;
           packageElement.classList.add("package-wrong");
-          audio.wrong.play();
+          playSound(audio.wrong);
         }
 
         updateUI();
@@ -583,6 +627,9 @@
       // End Game
       function endGame() {
         gameState.isPlaying = false;
+
+        // Stop background music
+        stopBackgroundMusic();
 
         // Save high score
         saveHighScore(gameState.score);

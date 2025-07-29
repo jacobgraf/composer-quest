@@ -128,3 +128,31 @@ The original audio file names (applause.mp3 and dissonant.mp3) were descriptive 
 - Maintained all existing audio functionality and volume settings
 
 [2025-07-29 21:31:20] - Audio files renamed for better code clarity
+
+## Decision
+
+Fixed audio playback issues and implemented background music system
+
+## Rationale
+
+The right/wrong sound effects were not playing due to browser autoplay restrictions and lack of proper error handling. Additionally, the user requested background music functionality that plays during gameplay and stops when the game is inactive.
+
+## Implementation Details
+
+- **Enhanced Audio System**: Added robust error handling with try-catch blocks and Promise-based play() calls
+- **Audio Helper Functions**: Created `playSound()` function that resets audio to start and handles play failures gracefully
+- **Background Music**: Added `music.mp3` support with loop functionality
+- **Music Control**: Implemented `startBackgroundMusic()` and `stopBackgroundMusic()` functions
+- **Game State Integration**: Background music starts when game begins and stops when game ends
+- **Volume Settings**: Set appropriate volumes (0.5 for effects, 0.2 for background music)
+- **Browser Compatibility**: Added fallback handling for browsers that block autoplay
+
+## Technical Changes
+
+- Enhanced audio object with background music support
+- Added currentTime reset for sound effects to ensure they play from start
+- Implemented Promise-based audio play with error catching
+- Integrated music start/stop with game state transitions
+- Increased effect volumes from 0.3 to 0.5 for better audibility
+
+[2025-07-29 21:35:00] - Audio system enhanced with background music and improved reliability
